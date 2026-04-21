@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 )
 
 func JSON(w http.ResponseWriter, code int, obj interface{}) {
@@ -15,6 +16,11 @@ func JSON(w http.ResponseWriter, code int, obj interface{}) {
 }
 
 func MigrateDB(db *sqlx.DB) {
+	if db == nil {
+		log.Warn("database migration skipped: db is nil")
+		return
+	}
+
 	db.MustExec(`
 		CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,

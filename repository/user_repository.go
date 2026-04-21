@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/oguzhantasimaz/Go-Clean-Architecture-Template/domain"
 
@@ -29,6 +30,10 @@ func NewUserRepository(db *sqlx.DB) UserRepository {
 }
 
 func (r *userRepository) GetUsers(ctx context.Context) ([]*domain.User, error) {
+	if r.db == nil {
+		return nil, errors.New("database connection is not configured")
+	}
+
 	var users []*domain.User
 	err := r.db.Select(&users, "SELECT * FROM users")
 	if err != nil {
@@ -39,6 +44,10 @@ func (r *userRepository) GetUsers(ctx context.Context) ([]*domain.User, error) {
 }
 
 func (r *userRepository) GetUserById(ctx context.Context, id int) (*domain.User, error) {
+	if r.db == nil {
+		return nil, errors.New("database connection is not configured")
+	}
+
 	user := domain.User{}
 	err := r.db.Get(&user, `SELECT * FROM users WHERE id = ?`, id)
 	if err != nil {
@@ -49,6 +58,10 @@ func (r *userRepository) GetUserById(ctx context.Context, id int) (*domain.User,
 }
 
 func (r *userRepository) GetUserByEmail(ctx context.Context, email string) (*domain.User, error) {
+	if r.db == nil {
+		return nil, errors.New("database connection is not configured")
+	}
+
 	user := domain.User{}
 	err := r.db.Get(&user, `SELECT * FROM users WHERE email = ?`, email)
 	if err != nil {
@@ -59,6 +72,10 @@ func (r *userRepository) GetUserByEmail(ctx context.Context, email string) (*dom
 }
 
 func (r *userRepository) CreateUser(ctx context.Context, user *domain.User) (*domain.User, error) {
+	if r.db == nil {
+		return nil, errors.New("database connection is not configured")
+	}
+
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return nil, err
@@ -98,6 +115,10 @@ func (r *userRepository) CreateUser(ctx context.Context, user *domain.User) (*do
 }
 
 func (r *userRepository) UpdateUser(ctx context.Context, user *domain.User) error {
+	if r.db == nil {
+		return errors.New("database connection is not configured")
+	}
+
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return err
@@ -140,6 +161,10 @@ func (r *userRepository) UpdateUser(ctx context.Context, user *domain.User) erro
 }
 
 func (r *userRepository) DeleteUser(ctx context.Context, userId int) error {
+	if r.db == nil {
+		return errors.New("database connection is not configured")
+	}
+
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return err

@@ -1,71 +1,52 @@
 package bootstrap
 
-// import (
-	// _ "github.com/go-sql-driver/mysql"
-// )
+import (
+	"fmt"
 
-// func NewMySQLDatabase(env *Env) *sqlx.DB {
-// 	dbHost := env.DBHost
-// 	dbPort := env.DBPort
-// 	dbUser := env.DBUser
-// 	dbPass := env.DBPass
-// 	dbName := env.DBName
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
+)
 
-// 	log.Infof("MySQL config: host='%s' port='%s' user='%s' name='%s'", dbHost, dbPort, dbUser, dbName)
+func NewMySQLDatabase(env *Env) *sqlx.DB {
+	if env == nil {
+		log.Warn("MySQL init skipped: env is nil")
+		return nil
+	}
 
-// 	// example connection string: "test:test@(localhost:3306)/test"
+	if env.DBHost == "" || env.DBPort == "" || env.DBUser == "" || env.DBName == "" {
+		log.Warn("MySQL config is incomplete; skipping database initialization")
+		return nil
+	}
 
-// 	// If no DB host or credentials are provided assume MySQL is not used in this deployment.
-// 	if dbHost == "" || dbPort == "" || dbUser == "" || dbName == "" {
-// 		log.Info("MySQL config not provided, skipping MySQL initialization")
-// 		return nil
-// 	}
+	dsn := fmt.Sprintf(
+		"%s:%s@(%s:%s)/%s?parseTime=true",
+		env.DBUser,
+		env.DBPass,
+		env.DBHost,
+		env.DBPort,
+		env.DBName,
+	)
 
-// 	db, err := sqlx.Connect("mysql", dbUser+":"+dbPass+"@("+dbHost+":"+dbPort+")/"+dbName+"?parseTime=true")
-// 	if err != nil {
-// 		log.Error("failed to connect to MySQL: ", err)
-// 		return nil
-// 	}
+	db, err := sqlx.Connect("mysql", dsn)
+	if err != nil {
+		log.Errorf("failed to connect to MySQL: %v", err)
+		return nil
+	}
 
-// 	return db
-// }
+	log.Info("Successfully connected to MySQL")
+	return db
+}
 
-// func CloseMySqlConnection(client *sqlx.DB) {
-// 	if client == nil {
-// 		package bootstrap
+func CloseMySqlConnection(client *sqlx.DB) {
+	if client == nil {
+		return
+	}
 
-// 		import (
-// 			_ "github.com/go-sql-driver/mysql"
-// 			"github.com/jmoiron/sqlx"
-// 			log "github.com/sirupsen/logrus"
-// 		)
+	if err := client.Close(); err != nil {
+		log.Errorf("failed to close MySQL connection: %v", err)
+		return
+	}
 
-// 		func NewMySQLDatabase(env *Env) *sqlx.DB {
-// 			dbHost := env.DBHost
-// 			dbPort := env.DBPort
-// 			dbUser := env.DBUser
-// 			dbPass := env.DBPass
-// 			dbName := env.DBName
-
-// 			// example connection string: "test:test@(localhost:3306)/test"
-
-// 			db, err := sqlx.Connect("mysql", dbUser+":"+dbPass+"@("+dbHost+":"+dbPort+")/"+dbName+"?parseTime=true")
-// 			if err != nil {
-// 				log.Fatal(err)
-// 			}
-
-// 			return db
-// 		}
-
-// 		func CloseMySqlConnection(client *sqlx.DB) {
-// 			if client == nil {
-// 				return
-// 			}
-
-// 			err := client.Close()
-// 			if err != nil {
-// 				log.Fatal(err)
-// 			}
-
-// 			log.Info("Connection to MySQL closed.")
-// 		}
+	log.Info("Connection to MySQL closed")
+}

@@ -30,6 +30,10 @@ func main() {
 	utils.MigrateDB(db)
 	log.Info("Step 4: Migration finished")
 
+	if db == nil {
+		log.Warn("database is not configured; the server will start, but DB-backed routes will return errors")
+	}
+
 	timeout := time.Duration(env.ContextTimeout) * time.Second
 
 	r := mux.NewRouter()
