@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"os"
 	"strconv"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -55,36 +56,52 @@ func NewEnv() *Env {
 		log.Fatal("Environment can't be loaded: ", err)
 	}
 
+	env.AppEnv = strings.TrimSpace(env.AppEnv)
+	env.ServerAddress = strings.TrimSpace(env.ServerAddress)
+	env.MongoURI = strings.TrimSpace(env.MongoURI)
+	env.CloudinaryURL = strings.TrimSpace(env.CloudinaryURL)
+	env.AccessTokenSecret = strings.TrimSpace(env.AccessTokenSecret)
+	env.RefreshTokenSecret = strings.TrimSpace(env.RefreshTokenSecret)
+	env.GoogleClientID = strings.TrimSpace(env.GoogleClientID)
+	env.GoogleClientSecret = strings.TrimSpace(env.GoogleClientSecret)
+
 	// Fall back to raw environment variables for any values Viper did not load.
 	// This keeps deployment configs working even if the config file is missing.
 	if env.AppEnv == "" {
-		env.AppEnv = os.Getenv("APP_ENV")
+		env.AppEnv = strings.TrimSpace(os.Getenv("APP_ENV"))
 	}
 	if env.ServerAddress == "" {
-		env.ServerAddress = os.Getenv("SERVER_ADDRESS")
+		env.ServerAddress = strings.TrimSpace(os.Getenv("SERVER_ADDRESS"))
 	}
 	if env.ContextTimeout == 0 {
-		if timeout, err := strconv.Atoi(os.Getenv("CONTEXT_TIMEOUT")); err == nil {
+		if timeout, err := strconv.Atoi(strings.TrimSpace(os.Getenv("CONTEXT_TIMEOUT"))); err == nil {
 			env.ContextTimeout = timeout
 		}
 	}
 	if env.MongoURI == "" {
-		env.MongoURI = os.Getenv("MONGO_URI")
+		env.MongoURI = strings.TrimSpace(os.Getenv("MONGO_URI"))
 	}
 	if env.CloudinaryURL == "" {
-		env.CloudinaryURL = os.Getenv("CLOUDINARY_URL")
+		env.CloudinaryURL = strings.TrimSpace(os.Getenv("CLOUDINARY_URL"))
 	}
 	if env.AccessTokenSecret == "" {
-		env.AccessTokenSecret = os.Getenv("ACCESS_TOKEN_SECRET")
+		env.AccessTokenSecret = strings.TrimSpace(os.Getenv("ACCESS_TOKEN_SECRET"))
 	}
 	if env.RefreshTokenSecret == "" {
-		env.RefreshTokenSecret = os.Getenv("REFRESH_TOKEN_SECRET")
+		env.RefreshTokenSecret = strings.TrimSpace(os.Getenv("REFRESH_TOKEN_SECRET"))
 	}
 	if env.GoogleClientID == "" {
-		env.GoogleClientID = os.Getenv("GOOGLE_CLIENT_ID")
+		env.GoogleClientID = strings.TrimSpace(os.Getenv("GOOGLE_CLIENT_ID"))
 	}
 	if env.GoogleClientSecret == "" {
-		env.GoogleClientSecret = os.Getenv("GOOGLE_CLIENT_SECRET")
+		env.GoogleClientSecret = strings.TrimSpace(os.Getenv("GOOGLE_CLIENT_SECRET"))
+	}
+
+	switch {
+	case viper.InConfig("MONGO_URI"):
+		log.Info("MONGO_URI loaded from .env")
+	case strings.TrimSpace(os.Getenv("MONGO_URI")) != "":
+		log.Info("MONGO_URI loaded from environment variables")
 	}
 
 	if env.AppEnv == "development" {
