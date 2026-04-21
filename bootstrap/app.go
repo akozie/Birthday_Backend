@@ -1,21 +1,26 @@
 package bootstrap
 
 import (
-	"github.com/jmoiron/sqlx"
+    "log"
+    "os"
 )
 
 type Application struct {
-	Env   *Env
-	MySql *sqlx.DB
+    Env *Env
+    // Don't rely on sqlx if you aren't using MySQL
 }
 
 func App() Application {
-	app := &Application{}
-	app.Env = NewEnv()
-	app.MySql = NewMySQLDatabase(app.Env)
-	return *app
-}
+    app := &Application{}
+    app.Env = NewEnv()
 
-func (app *Application) CloseDBConnection() {
-	CloseMySqlConnection(app.MySql)
+    // DEBUG: Print what we are reading
+    mongoURI := os.Getenv("MONGO_URI") 
+    log.Printf("DEBUG: The MONGO_URI variable is: '%s'", mongoURI)
+
+    if mongoURI == "" {
+        log.Fatal("FATAL: MONGO_URI is empty! Check your Railway Environment Variables.")
+    }
+
+    return *app
 }
