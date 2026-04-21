@@ -46,6 +46,9 @@ func main() {
 	}
 
 	mongoClient := database.NewMongoClient(mongoURI)
+	if mongoClient == nil {
+		log.Fatal("MongoDB client could not be initialized")
+	}
 	defer func() {
 		if err := mongoClient.Disconnect(context.Background()); err != nil {
 			log.Errorf("error disconnecting from MongoDB: %v", err)
