@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"log"
 	"net/url"
+	"sort"
 	"strings"
 	"time"
 
@@ -20,8 +21,8 @@ func NewMongoClient(uri string) *mongo.Client {
 		return nil
 	}
 
-	if parsed, err := url.Parse(uri); err == nil && parsed.Host != "" {
-		log.Printf("MongoDB host: %s", parsed.Host)
+	if parsed, err := url.Parse(uri); err == nil {
+		logMongoURIInfo(parsed)
 	}
 
 	// Keep the startup timeout bounded, but don't crash the process if pinging
@@ -54,4 +55,42 @@ func NewMongoClient(uri string) *mongo.Client {
 
 	log.Println("🚀 Successfully connected to MongoDB!")
 	return client
+}
+
+func logMongoURIInfo(parsed *url.URL) {
+	if parsed == nil {
+		return
+	}
+
+	log.Printf("MongoDB URI scheme: %s", parsed.Scheme)
+	if parsed.Host != "" {
+		log.Printf("MongoDB host: %s", parsed.Host)
+	}
+	if parsed.Path != "" && parsed.Path != "/" {
+		log.Printf("MongoDB database path: %s", strings.TrimPrefix(parsed.Path, "/"))
+	}
+
+	query := parsed.Query()
+	if len(query) == 0 {
+		log.Println("MongoDB URI query: none")
+		return
+	}
+
+	keys := make([]string, 0, len(query))
+	for key := range query {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	safeValues := make([]string, 0, len(keys))
+	for _, key := range keys {
+		switch key {
+		case "authMechanism", "authSource", "appName", "retryWrites", "tls", "w":
+			safeValues = append(safeValues, key+"="+strings.Join(query[key], ","))
+		default:
+			safeValues = append(safeValues, key+"=[redacted]")
+		}
+	}
+
+	log.Printf("MongoDB URI query params: %s", strings.Join(safeValues, ", "))
 }
