@@ -1,14 +1,14 @@
 # Golang Backend Clean Architecture Template
 
-![GitHub](https://img.shields.io/github/license/oguzhantasimaz/Go-Clean-Architecture-Template)
-![GitHub Go Module Version](https://img.shields.io/github/go-mod/go-version/oguzhantasimaz/Go-Clean-Architecture-Template)
-![GitHub issues](https://img.shields.io/github/issues/oguzhantasimaz/Go-Clean-Architecture-Template)
+![GitHub](https://img.shields.io/github/license/akozie/babe-25th-backend)
+![GitHub Go Module Version](https://img.shields.io/github/go-mod/go-version/akozie/babe-25th-backend)
+![GitHub issues](https://img.shields.io/github/issues/akozie/babe-25th-backend)
 
 This is a template repository for building a Golang backend application following the Clean Architecture principles. It includes the following features:
 
 - **Google Auth**: Integration with Google OAuth for user authentication.
 - **JWT Auth**: Token-based authentication and authorization system.
-- **MySQL Connection**: Database connectivity to MySQL for data storage.
+- **MongoDB Connection**: Database connectivity to MongoDB for data storage.
 - **User CRUD Operations**: Basic user management operations (Create, Read, Update, Delete).
 
 **You can use this project as a template to build your Backend project in the Go language on top of this project.**
@@ -27,7 +27,7 @@ Follow the steps below to set up and start using this template for your Golang b
 Before you begin, ensure you have the following installed:
 
 - [Go](https://golang.org/doc/install)
-- [MySQL](https://dev.mysql.com/downloads/installer/) (or a compatible database)
+- [MongoDB](https://www.mongodb.com/) database
 - [Google Cloud Console](https://console.cloud.google.com/) project for Google Auth setup.
 
 ### Installation
@@ -42,7 +42,7 @@ There are two ways to start using this template:
 1. Clone this repository to your local machine:
 
    ```bash
-   git clone https://github.com/oguzhantasimaz/Go-Clean-Architecture-Template.git
+   git clone https://github.com/akozie/babe-25th-backend.git
    cd your-repo-name
    ```
 
@@ -58,7 +58,7 @@ There are two ways to start using this template:
 
 1. Set up your Google OAuth credentials in the Google Cloud Console, and update your `.env` file with the corresponding client ID and client secret.
 
-2. Configure your MySQL database connection in the `.env` file with the appropriate credentials.
+2. Configure your MongoDB and Cloudinary credentials in the `.env` file with the appropriate values.
 
 ### Usage
 

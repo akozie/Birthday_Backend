@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/oguzhantasimaz/Go-Clean-Architecture-Template/bootstrap"
+	"github.com/akozie/babe-25th-backend/bootstrap"
 
 	"golang.org/x/oauth2"
 )

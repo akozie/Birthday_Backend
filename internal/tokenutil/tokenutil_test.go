@@ -1,11 +1,11 @@
 package tokenutil_test
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 
-	"github.com/oguzhantasimaz/Go-Clean-Architecture-Template/domain"
-	"github.com/oguzhantasimaz/Go-Clean-Architecture-Template/internal/tokenutil"
+	"github.com/akozie/babe-25th-backend/domain"
+	"github.com/akozie/babe-25th-backend/internal/tokenutil"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateAccessToken(t *testing.T) {

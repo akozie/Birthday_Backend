@@ -3,7 +3,7 @@ package tokenutil
 import (
 	"time"
 
-	"github.com/oguzhantasimaz/Go-Clean-Architecture-Template/domain"
+	"github.com/akozie/babe-25th-backend/domain"
 
 	"github.com/golang-jwt/jwt/v4"
 )

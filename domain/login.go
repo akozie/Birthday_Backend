@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 
-	"github.com/oguzhantasimaz/Go-Clean-Architecture-Template/bootstrap"
+	"github.com/akozie/babe-25th-backend/bootstrap"
 )
 
 type LoginRequest struct {

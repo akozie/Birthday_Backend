@@ -12,11 +12,8 @@ type Env struct {
 	AppEnv                 string `mapstructure:"APP_ENV"`
 	ServerAddress          string `mapstructure:"SERVER_ADDRESS"`
 	ContextTimeout         int    `mapstructure:"CONTEXT_TIMEOUT"`
-	DBHost                 string `mapstructure:"DB_HOST"`
-	DBPort                 string `mapstructure:"DB_PORT"`
-	DBUser                 string `mapstructure:"DB_USER"`
-	DBPass                 string `mapstructure:"DB_PASS"`
-	DBName                 string `mapstructure:"DB_NAME"`
+	MongoURI               string `mapstructure:"MONGO_URI"`
+	CloudinaryURL          string `mapstructure:"CLOUDINARY_URL"`
 	AccessTokenExpiryHour  int    `mapstructure:"ACCESS_TOKEN_EXPIRY_HOUR"`
 	RefreshTokenExpiryHour int    `mapstructure:"REFRESH_TOKEN_EXPIRY_HOUR"`
 	AccessTokenSecret      string `mapstructure:"ACCESS_TOKEN_SECRET"`
@@ -36,11 +33,8 @@ func NewEnv() *Env {
 		"APP_ENV",
 		"SERVER_ADDRESS",
 		"CONTEXT_TIMEOUT",
-		"DB_HOST",
-		"DB_PORT",
-		"DB_USER",
-		"DB_PASS",
-		"DB_NAME",
+		"MONGO_URI",
+		"CLOUDINARY_URL",
 		"ACCESS_TOKEN_EXPIRY_HOUR",
 		"REFRESH_TOKEN_EXPIRY_HOUR",
 		"ACCESS_TOKEN_SECRET",
@@ -74,20 +68,11 @@ func NewEnv() *Env {
 			env.ContextTimeout = timeout
 		}
 	}
-	if env.DBHost == "" {
-		env.DBHost = os.Getenv("DB_HOST")
+	if env.MongoURI == "" {
+		env.MongoURI = os.Getenv("MONGO_URI")
 	}
-	if env.DBPort == "" {
-		env.DBPort = os.Getenv("DB_PORT")
-	}
-	if env.DBUser == "" {
-		env.DBUser = os.Getenv("DB_USER")
-	}
-	if env.DBPass == "" {
-		env.DBPass = os.Getenv("DB_PASS")
-	}
-	if env.DBName == "" {
-		env.DBName = os.Getenv("DB_NAME")
+	if env.CloudinaryURL == "" {
+		env.CloudinaryURL = os.Getenv("CLOUDINARY_URL")
 	}
 	if env.AccessTokenSecret == "" {
 		env.AccessTokenSecret = os.Getenv("ACCESS_TOKEN_SECRET")
