@@ -16,29 +16,30 @@ import (
 )
 
 func main() {
+	log.Info("--- STARTUP: Initializing Application ---")
+	
+	log.Info("Step 1: Running bootstrap.App()")
 	app := bootstrap.App()
+	log.Info("Step 2: Bootstrap successful")
+
 	env := app.Env
 	db := app.MySql
 	defer app.CloseDBConnection()
 
+	log.Info("Step 3: Starting Database Migration")
 	utils.MigrateDB(db)
+	log.Info("Step 4: Migration finished")
 
 	timeout := time.Duration(env.ContextTimeout) * time.Second
 
 	r := mux.NewRouter()
-
 	route.Setup(env, timeout, db, r)
 
-	// --- FIX: Logic to handle Railway's dynamic port ---
 	port := os.Getenv("PORT")
-	address := env.ServerAddress // Defaults to your .env/config value (e.g., localhost:8080)
-
-	// If we are in a cloud environment (like Railway), use the PORT env var
-	// and listen on all interfaces by prepending just the colon ":"
+	address := env.ServerAddress
 	if port != "" {
 		address = ":" + port
 	}
-	// ----------------------------------------------------
 
 	srv := &http.Server{
 		Addr:         address,
@@ -49,21 +50,16 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("Server starting on %s", address)
+		log.Infof("--- SUCCESS: Server listening on %s ---", address)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Error(err)
+			log.Errorf("Server error: %v", err)
 		}
 	}()
 
-	log.Info("server started")
-
-	// Graceful Shutdown
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
-	// Block until we receive our signal.
 	<-c
 
-	// Create a deadline to wait for.
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 	srv.Shutdown(ctx)
