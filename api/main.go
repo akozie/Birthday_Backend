@@ -50,7 +50,7 @@ func main() {
 
 	r.Use(cors.Handler(cors.Options{
     // Update this line to allow both 3000 and 3001, or just 3001 if that's your new port
-    AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001"}, 
+    AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001", "https://birthday-frontend-lake.vercel.app"}, 
     AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
     AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
     AllowCredentials: true,
