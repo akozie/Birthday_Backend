@@ -3,6 +3,9 @@ package http
 import (
 	"encoding/json"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
+
 	"github.com/akozie/babe-25th-backend/internal/domain" // Update with your actual module path
 )
 
@@ -29,8 +32,10 @@ func (h *MessageHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MessageHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+	log.Info("GET /api/v1/messages: handler entered")
 	messages, err := h.Usecase.GetAllMessages(r.Context())
 	if err != nil {
+		log.WithError(err).Warn("GET /api/v1/messages failed")
 		http.Error(w, "Failed to fetch messages", http.StatusInternalServerError)
 		return
 	}

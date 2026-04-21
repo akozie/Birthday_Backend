@@ -3,7 +3,9 @@ package http
 import (
 	"encoding/json"
 	"net/http"
-	
+
+	log "github.com/sirupsen/logrus"
+
 	"github.com/akozie/babe-25th-backend/internal/domain"
 )
 
@@ -44,8 +46,10 @@ func (h *MemoryHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MemoryHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+	log.Info("GET /api/v1/memories: handler entered")
 	memories, err := h.Usecase.GetAllMemories(r.Context())
 	if err != nil {
+		log.WithError(err).Warn("GET /api/v1/memories failed")
 		http.Error(w, "Could not fetch memories", http.StatusInternalServerError)
 		return
 	}

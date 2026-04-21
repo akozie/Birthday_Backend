@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	log "github.com/sirupsen/logrus"
 
@@ -74,6 +75,8 @@ func main() {
 	messageHandler := &httpdelivery.MessageHandler{Usecase: msgUsecase}
 
 	r := chi.NewRouter()
+	r.Use(chiMiddleware.Recoverer)
+	r.Use(chiMiddleware.Timeout(timeout))
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001", "*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
