@@ -1,14 +1,17 @@
-FROM golang:1.21-alpine
-
-RUN mkdir /app
-
-ADD . /app
-
+# Stage 1: Build
+FROM golang:1.21-alpine AS builder
 WORKDIR /app
-
-# ADD .ENV file to /app
-ADD .env /app
-
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
 RUN go build -o main cmd/main.go
 
-CMD ["/app/main"]
+# Stage 2: Run
+FROM alpine:latest
+WORKDIR /app
+# Only copy the binary from the builder
+COPY --from=builder /app/main .
+
+# Expose port 8080
+EXPOSE 8080
+CMD ["./main"]
