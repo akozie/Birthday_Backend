@@ -29,8 +29,19 @@ func main() {
 
 	route.Setup(env, timeout, db, r)
 
+	// --- FIX: Logic to handle Railway's dynamic port ---
+	port := os.Getenv("PORT")
+	address := env.ServerAddress // Defaults to your .env/config value (e.g., localhost:8080)
+
+	// If we are in a cloud environment (like Railway), use the PORT env var
+	// and listen on all interfaces by prepending just the colon ":"
+	if port != "" {
+		address = ":" + port
+	}
+	// ----------------------------------------------------
+
 	srv := &http.Server{
-		Addr:         env.ServerAddress,
+		Addr:         address,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
@@ -38,7 +49,8 @@ func main() {
 	}
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil {
+		log.Printf("Server starting on %s", address)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Error(err)
 		}
 	}()
