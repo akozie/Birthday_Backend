@@ -2,7 +2,10 @@ package database
 
 import (
 	"context"
+	"crypto/tls"
 	"log"
+	"net/url"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -11,9 +14,14 @@ import (
 
 // NewMongoClient establishes a connection to MongoDB
 func NewMongoClient(uri string) *mongo.Client {
+	uri = strings.TrimSpace(uri)
 	if uri == "" {
 		log.Println("MONGO_URI is empty")
 		return nil
+	}
+
+	if parsed, err := url.Parse(uri); err == nil && parsed.Host != "" {
+		log.Printf("MongoDB host: %s", parsed.Host)
 	}
 
 	// Keep the startup timeout bounded, but don't crash the process if pinging
@@ -22,7 +30,11 @@ func NewMongoClient(uri string) *mongo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	clientOptions := options.Client().ApplyURI(uri)
+	clientOptions := options.Client().
+		ApplyURI(uri).
+		SetConnectTimeout(15*time.Second).
+		SetServerSelectionTimeout(15*time.Second).
+		SetTLSConfig(&tls.Config{MinVersion: tls.VersionTLS12})
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Printf("Failed to create MongoDB client: %v", err)
