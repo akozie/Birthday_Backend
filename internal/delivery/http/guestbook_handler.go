@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/akozie/babe-25th-backend/internal/domain"
 )
 
@@ -21,11 +19,9 @@ func (h *GuestbookHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *GuestbookHandler) GetAll(w http.ResponseWriter, r *http.Request) {
-	log.Info("GET /api/v1/guestbook: handler entered")
 	entries, err := h.Usecase.GetAllEntries(r.Context())
 	if err != nil {
-		log.WithError(err).Warn("GET /api/v1/guestbook failed")
-		http.Error(w, "Could not fetch guestbook entries", http.StatusInternalServerError)
+		writeServiceError(w, err, "GET /api/v1/guestbook failed")
 		return
 	}
 	json.NewEncoder(w).Encode(entries)

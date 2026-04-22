@@ -65,7 +65,7 @@ There are two ways to start using this template:
 Run the following command to start the Golang backend server:
 
 ```bash
-go run main.go
+go run ./cmd/api
 ```
 
 Your server should now be running at port you specified in the `.env` file.
@@ -85,7 +85,7 @@ Your server should now be running at port you specified in the `.env` file.
 ├── repository/
 ├── usecase/
 ├── utils/
-└── main.go
+└── cmd/api/main.go
 ```
 
 ## About Me

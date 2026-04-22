@@ -63,20 +63,19 @@ func main() {
 	}
 
 	memRepo := mongodb.NewMongoMemoryRepository(db)
-	memUsecase := usecase.NewMemoryUsecase(memRepo, cloudinaryService)
+	memUsecase := usecase.NewMemoryUsecase(memRepo, cloudinaryService, timeout)
 	memHandler := &httpdelivery.MemoryHandler{Usecase: memUsecase}
 
 	guestRepo := mongodb.NewMongoGuestbookRepository(db)
-	guestUsecase := usecase.NewGuestbookUsecase(guestRepo)
+	guestUsecase := usecase.NewGuestbookUsecase(guestRepo, timeout)
 	guestHandler := &httpdelivery.GuestbookHandler{Usecase: guestUsecase}
 
 	msgRepo := mongodb.NewMessageRepository(db)
-	msgUsecase := usecase.NewMessageUsecase(msgRepo)
+	msgUsecase := usecase.NewMessageUsecase(msgRepo, timeout)
 	messageHandler := &httpdelivery.MessageHandler{Usecase: msgUsecase}
 
 	r := chi.NewRouter()
 	r.Use(chiMiddleware.Recoverer)
-	r.Use(chiMiddleware.Timeout(timeout))
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001", "*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
